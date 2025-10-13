@@ -112,3 +112,36 @@ def delete_memory(memory_id):
     
     flash('Memory has been deleted.', 'info')
     return redirect(url_for('home'))
+
+@app.route('/edit/<memory_id>', methods=['GET', 'POST'])
+@login_required
+def edit_memory(memory_id):
+    memory_to_edit = Memory.objects.get(id=memory_id)
+    # Pre-populate the form with the existing memory data
+    form = MemoryForm(obj=memory_to_edit)
+
+    if form.validate_on_submit():
+        # Update the memory's fields with the new data from the form
+        memory_to_edit.title = form.title.data
+        memory_to_edit.story = form.story.data
+        memory_to_edit.event_date = form.event_date.data
+        
+        # --- Handle optional new file upload ---
+        if form.photo.data:
+            # Delete the old image file
+            old_image_path = os.path.join(app.config['UPLOAD_FOLDER'], memory_to_edit.image_filename)
+            if os.path.exists(old_image_path):
+                os.remove(old_image_path)
+            
+            # Save the new image file
+            file = form.photo.data
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            # Update the filename in the database
+            memory_to_edit.image_filename = filename
+
+        memory_to_edit.save()
+        flash('Memory updated successfully!', 'success')
+        return redirect(url_for('home'))
+
+    return render_template('edit_memory.html', form=form, memory=memory_to_edit)

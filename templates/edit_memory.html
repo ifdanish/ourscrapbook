@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1 class="h2 mb-4">Edit Memory</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                
+                <div class="mb-3">
+                    {{ form.title.label(class="form-label") }}
+                    {{ form.title(class="form-control") }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.story.label(class="form-label") }}
+                    {{ form.story(class="form-control", rows=5) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.event_date.label(class="form-label") }}
+                    {{ form.event_date(class="form-control") }}
+                </div>
+
+                <div class="mb-3">
+                    <p>Current Image: {{ memory.image_filename }}</p>
+                    {{ form.photo.label(class="form-label") }} (Upload a new photo to replace the current one)
+                    {{ form.photo(class="form-control") }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.submit(class="btn btn-primary", value="Update Memory") }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
