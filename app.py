@@ -1,7 +1,9 @@
-from flask import Flask, render_template, redirect, url_for, flash, request
-from models import db, Memory
+from flask import Flask, render_template, redirect, url_for, flash, request, send_from_directory
+from models import db, Memory, User
 from werkzeug.utils import secure_filename
-from forms import MemoryForm
+from werkzeug.security import generate_password_hash, check_password_hash
+from forms import MemoryForm, RegistrationForm, LoginForm
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 import os
 
 app = Flask(__name__)
@@ -16,7 +18,21 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 
 db.init_app(app)
 
+# --- Flask-Login Setup ---
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login' # The route to redirect to for login
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.objects.get(id=user_id)
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 @app.route('/add', methods=['GET', 'POST'])
+@login_required 
 def add_memory():
     form = MemoryForm()
     if form.validate_on_submit():
@@ -43,6 +59,39 @@ def add_memory():
     return render_template('add_memory.html', form=form)
 
 @app.route('/')
+@login_required 
 def home():
     memories = Memory.objects.order_by('-event_date')
     return render_template('home.html', memories=memories)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
+        new_user = User(name=form.name.data, email=form.email.data, password=hashed_password)
+        new_user.save()
+        flash('Your account has been created! You are now able to log in.', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.objects(email=form.email.data).first()
+        if user and check_password_hash(user.password, form.password.data):
+            login_user(user)
+            return redirect(url_for('home'))
+        else:
+            flash('Login Unsuccessful. Please check email and password.', 'danger')
+    return render_template('login.html', form=form)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('login'))

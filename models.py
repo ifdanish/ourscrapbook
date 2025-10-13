@@ -1,5 +1,6 @@
 from flask_mongoengine import MongoEngine
 import datetime
+from flask_login import UserMixin
 
 db = MongoEngine()
 
@@ -11,3 +12,10 @@ class Memory(db.Document):
     created_at = db.DateTimeField(default=datetime.datetime.utcnow)
 
     meta = {'collection': 'memories'}
+
+class User(db.Document, UserMixin):
+    name = db.StringField(required=True)
+    email = db.StringField(required=True, unique=True)
+    password = db.StringField(required=True)
+
+    meta = {'collection': 'users'}  
