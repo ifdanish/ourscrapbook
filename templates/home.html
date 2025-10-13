@@ -2,7 +2,7 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h2">Our Memories</h1>
-    <a href="#" class="btn btn-primary">Add New Memory</a>
+    <a href="{{ url_for('add_memory') }}" class="btn btn-primary">Add New Memory</a>
 </div>
 
 {% for memory in memories %}
