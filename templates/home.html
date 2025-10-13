@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">Our Memories</h1>
+    <a href="#" class="btn btn-primary">Add New Memory</a>
+</div>
+
+{% for memory in memories %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ memory.title }}</h5>
+            <p class="card-text">{{ memory.story }}</p>
+            <small class="text-muted">{{ memory.event_date.strftime('%B %d, %Y') }}</small>
+        </div>
+    </div>
+{% else %}
+    <div class="text-center p-5">
+        <p>No memories yet. Let's add our first one!</p>
+    </div>
+{% endfor %}
+{% endblock %}
