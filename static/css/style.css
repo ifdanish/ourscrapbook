@@ -1,0 +1,46 @@
+/* Add this at the top of your file */
+:root {
+    --primary-bg: #fdfaf6; /* A warm, off-white for the page background */
+    --navbar-bg: #5c5470;  /* A soft, dark purple for the navbar */
+    --card-bg: #ffffff;   /* Clean white for the cards */
+    --primary-text: #2d283e; /* A darker purple for text */
+    --accent-color: #dbd8e3; /* A light lavender for borders */
+}
+
+body {
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+    font-family: 'Source Sans 3', sans-serif; /* Clean font for paragraphs */
+}
+
+/* Override Bootstrap's default navbar color */
+.navbar-dark {
+    background-color: var(--navbar-bg) !important; /* !important is needed to override Bootstrap */
+}
+
+/* Override Bootstrap's default primary button color */
+.btn-primary {
+    background-color: var(--navbar-bg);
+    border-color: var(--navbar-bg);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-text);
+    border-color: var(--primary-text);
+}
+
+h1, h2, h3, h4, h5, .card-title {
+    font-family: 'Lora', serif; /* Stylish font for all headings */
+}
+
+.card {
+    border: 1px solid var(--accent-color); /* Use our light lavender border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* A softer shadow */
+    transition: all 0.3s ease-in-out; /* Smooth transition for the hover effect */
+}
+
+/* Add a "pop" effect when hovering over a card */
+.card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
