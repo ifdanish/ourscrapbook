@@ -95,3 +95,20 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+@app.route('/delete/<memory_id>', methods=['POST'])
+@login_required
+def delete_memory(memory_id):
+    # Find the memory to delete
+    memory_to_delete = Memory.objects.get(id=memory_id)
+    
+    # --- Delete the associated image file ---
+    image_path = os.path.join(app.config['UPLOAD_FOLDER'], memory_to_delete.image_filename)
+    if os.path.exists(image_path):
+        os.remove(image_path)
+    
+    # --- Delete the memory document from the database ---
+    memory_to_delete.delete()
+    
+    flash('Memory has been deleted.', 'info')
+    return redirect(url_for('home'))
