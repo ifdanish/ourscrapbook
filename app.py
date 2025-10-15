@@ -63,9 +63,14 @@ def add_memory():
 @app.route('/')
 @login_required 
 def home():
-    #memories = Memory.objects.order_by('-event_date')
-    #return render_template('home.html', memories=memories)
-    memories = Memory.objects(user=current_user).order_by('-event_date')
+    query = request.args.get('query')
+
+    if query:
+        # If a query exists, filter memories where the title contains the query (case-insensitive)
+        memories = Memory.objects(user=current_user, title__icontains=query).order_by('-event_date')
+    else:
+        # If no query, get all memories for the user
+        memories = Memory.objects(user=current_user).order_by('-event_date')
     
     return render_template('home.html', memories=memories)
 

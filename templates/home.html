@@ -11,6 +11,13 @@
     {% endif %}
 </div>
 
+<form method="GET" action="{{ url_for('home') }}" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="query" class="form-control" placeholder="Search by title..." value="{{ query or '' }}">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </div>
+</form>
+
 <div class="row justify-content-center">
     <div class="col-md-8">
 
