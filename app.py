@@ -49,7 +49,8 @@ def add_memory():
             title=form.title.data,
             story=form.story.data,
             event_date=form.event_date.data,
-            image_filename=filename # Save only the filename
+            image_filename=filename, # Save only the filename
+            user=current_user
         )
         new_memory.save()
         
@@ -61,7 +62,10 @@ def add_memory():
 @app.route('/')
 @login_required 
 def home():
-    memories = Memory.objects.order_by('-event_date')
+    #memories = Memory.objects.order_by('-event_date')
+    #return render_template('home.html', memories=memories)
+    memories = Memory.objects(user=current_user).order_by('-event_date')
+    
     return render_template('home.html', memories=memories)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -100,7 +104,7 @@ def logout():
 @login_required
 def delete_memory(memory_id):
     # Find the memory to delete
-    memory_to_delete = Memory.objects.get(id=memory_id)
+    memory_to_delete = Memory.objects.get_or_404(id=memory_id, user=current_user)
     
     # --- Delete the associated image file ---
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], memory_to_delete.image_filename)
@@ -116,8 +120,7 @@ def delete_memory(memory_id):
 @app.route('/edit/<memory_id>', methods=['GET', 'POST'])
 @login_required
 def edit_memory(memory_id):
-    memory_to_edit = Memory.objects.get(id=memory_id)
-    # Pre-populate the form with the existing memory data
+    memory_to_edit = Memory.objects.get_or_404(id=memory_id, user=current_user)
     form = MemoryForm(obj=memory_to_edit)
 
     if form.validate_on_submit():

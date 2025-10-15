@@ -11,6 +11,8 @@ class Memory(db.Document):
     image_filename = db.StringField(required=True)
     created_at = db.DateTimeField(default=datetime.datetime.utcnow)
 
+    user = db.ReferenceField('User', required=True)
+
     meta = {'collection': 'memories'}
 
 class User(db.Document, UserMixin):
