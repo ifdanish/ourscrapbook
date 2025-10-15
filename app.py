@@ -1,10 +1,11 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, send_from_directory
+from flask import Flask, render_template, redirect, url_for, flash, request, send_from_directory, jsonify
 from models import db, Memory, User
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import MemoryForm, RegistrationForm, LoginForm
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 import os
+import json
 
 app = Flask(__name__)
 
@@ -114,8 +115,7 @@ def delete_memory(memory_id):
     # --- Delete the memory document from the database ---
     memory_to_delete.delete()
     
-    flash('Memory has been deleted.', 'info')
-    return redirect(url_for('home'))
+    return jsonify({'result': 'success'})
 
 @app.route('/edit/<memory_id>', methods=['GET', 'POST'])
 @login_required
